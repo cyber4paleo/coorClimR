@@ -13,9 +13,14 @@ A paleoecologist wants to plot *Quercus* pollen abundance against January minimu
 ### API
 
 #### getData
-```getData <- function(x, y, t, producer="", model="", modelVersion="", variableType="", variableUnits="", variablePeriod="", variablePeriodType="",averagingPeriod="", averagingPeriodType="", resolution="")
-```
+<pre>
+getData <- function(x, y, t, producer="", model="", modelVersion="", variableType="", variableUnits="", variablePeriod="", variablePeriodType="",averagingPeriod="", averagingPeriodType="", resolution="")
+</pre>
+
 This function is a wrapper around the HTTP niche api.  ```x```, ```y```, ```t``` are the only required arguments to the function, and represent longitude, latitude, and yearsBP, respectively.  The other fields refer to the metadata search performed by the api.  The function returns an R data frame with the columns:
-``` [1] "variableUnits"       "variablePeriodType"  "yearsBP"             "VariableType"        "variableID"          "Producer"            "sourceID"           
+<pre>
+[1] "variableUnits"       "variablePeriodType"  "yearsBP"             "VariableType"        "variableID"          "Producer"            "sourceID"           
  [8] "ModelVersion"        "tableName"           "VariableDescription" "value"               "averagingPeriodType" "longitude"           "variablePeriod"     
-[15] "latitude"            "averagingPeriod"     "Model"   ```
+[15] "latitude"            "averagingPeriod"     "Model"
+</pre>
+
