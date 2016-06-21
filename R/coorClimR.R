@@ -402,6 +402,7 @@ convertVertnettoDF <- function(taxonname, genus = "", species = "", state = "", 
     limit = 100000
   }
   # API data request
+<<<<<<< HEAD
   response <- vertsearch(taxonname, genus=genus, species=species, state=state, limit=limit, compact = TRUE, verbose = TRUE)
   
   # Get the specific column data that we need from the response.
@@ -413,6 +414,32 @@ convertVertnettoDF <- function(taxonname, genus = "", species = "", state = "", 
   df <- na.omit(df)
   df <- unique(df)
   df['age'] <- abs(1950 - df['Age'])
+=======
+  df <- tryCatch(
+    {
+      response <- vertsearch(taxonname, genus=genus, species=species, state=state, limit=limit, compact = TRUE, verbose = TRUE)
+      # Get the specific column data that we need from the response.
+      # lat, lon, age
+      df <- response$data[c("decimallongitude", "decimallatitude", "year")]
+      names(df) <- c("Longitude", "Latitude", "Age")
+      df <- data.matrix(df)
+      df <- data.frame(df)
+      df <- na.omit(df)
+      df <- unique(df)
+      return(df)
+    },
+    error=function(cond){
+      print("error: vertsearch: problem with query")
+      return(NULL)
+    },
+    warning=function(cond){
+      print("warning: vertsearch: problem with query")
+      return(NULL)
+    },
+    finally={
+    }
+  )
+>>>>>>> 955e6b5e88df4b253ae2b904d37d112ccfab0fd7
   return(df)
 }
 
