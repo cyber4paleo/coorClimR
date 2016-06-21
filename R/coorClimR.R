@@ -57,7 +57,21 @@ getData <- function(x, y ="", t="", producer="", model="", modelVersion="", vari
     return(q)
     })
     df <- na.omit(df)
-    df <-do.call("rbind", df)
+    df <-tryCatch(
+      {
+        do.call("rbind", df)
+      },
+      error=function(cond){
+        print("error: getData: unable to rbind rows")
+        return(NULL)
+      },
+      warning=function(cond){
+        print("warning: getData: unable to rbind rows")
+        return(NULL)
+      },
+      finally={
+      }
+    )
     return(df)
   }else if (class(x) == "numeric"){
     ##this is for an x,y,t combination as arguments
@@ -385,7 +399,7 @@ convertVertnettoDF <- function(taxonname, genus = "", species = "", state = "", 
 
   # The default search has 1000 limit. However, if no limit is given, set to 100,000
   if (limit == ""){
-    limit = 100
+    limit = 100000
   }
   # API data request
   response <- vertsearch(taxonname, genus=genus, species=species, state=state, limit=limit, compact = TRUE, verbose = TRUE)
@@ -400,6 +414,7 @@ convertVertnettoDF <- function(taxonname, genus = "", species = "", state = "", 
   df <- unique(df)
   return(df)
 }
+
 
 #' Get climate data for Vertnet occurrences.
 #' @export
@@ -419,3 +434,29 @@ queryVertnet <- function(taxonname, genus = "", species = "", state = "", limit 
   output <- getData(inputDF)
   return(output)
 }
+
+#' Query multiple databases at a time. Merge results.
+#' @param taxonname string: Name(s) of the taxonomic grouping that you wish to query Vertnet for.
+#' @return output data.frame: Combined results from all databases
+#' @examples
+#' queryAll("bison bison")
+
+queryAll <- function(taxonname){
+  ndf <- queryNeotoma(taxonname)
+  vdf <- queryVertnet(taxonname)
+  output <- NULL
+  if (class(vdf) == "data.frame" && class(ndf) == "data.frame"){
+    output <- rbind(ndf, vdf)
+  }else if (class(vdf) != "data.frame" && class(ndf) == "data.frame"){
+    print("error: invalid vertnet results")
+    return(ndf)
+  }else if (class(ndf) != "data.frame" && class(vdf) == "data.frame"){
+    print("error: invalid neotoma results")
+    return(vdf)
+  }else{
+    print("error: invalid neotoma and vertnet results")
+    return(NULL)
+  }
+  return(output)
+}
+
