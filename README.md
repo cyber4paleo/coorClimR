@@ -1,6 +1,10 @@
 # coorClimR
 Geocoordinates-to-Climate in R
 
+#### Authors
+[Scott Farley](mailto:sfarley2@wisc.edu)
+Chris Heiser
+
 ### Problem
 Managing large climate datasets on personal computers is difficult, and is overwhelming for projects that require only small, point based analyses.  This type of analysis does not require the spatial nature of the grid-based GCM output.  However, to date, there are no tools that allow a user to directly query for values at a single point within a GCM output grid.  
 
