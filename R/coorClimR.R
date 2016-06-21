@@ -413,6 +413,7 @@ convertVertnettoDF <- function(taxonname, genus = "", species = "", state = "", 
       df <- data.frame(df)
       df <- na.omit(df)
       df <- unique(df)
+      df['Age'] <- abs(1950 - df["Age"])
       return(df)
     },
     error=function(cond){
