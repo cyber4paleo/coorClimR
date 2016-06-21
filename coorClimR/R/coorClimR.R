@@ -197,7 +197,7 @@ checkNumeric <- function(x) is.numeric(x) & !is.na(x)
 
 #' Get Neotoma Occurrence Data
 #' Function uses the Neotoma API SampleData endpoint
-#' @param taxonname String The name of the taxonomic grouping that you wish tok query neotoma for.  Matches a taxon in the neotoma database
+#' @param taxonname String The name of the taxonomic grouping that you wish to query Neotoma for.  Matches a taxon in the neotoma database
 #' @param ageold Integer Oldest age, as calendar years before present, to include in results from neotoma.
 #' @param ageyoung Integer Youngest age, as calendar years before present, to include in results.
 #' @param loc A list of the form longitudeWest, latitudeSouth, longitudeEast, latitudeNorth that represents a bounding box in which to search for occurrences in Neotoma
@@ -258,7 +258,7 @@ convertNeotomaSDToDF <- function(taxonname, ageold="", ageyoung="", loc="", gpid
 }
 
 #' Get Climate Data for Neotoma Occurrences
-#' #' @param taxonname String The name of the taxonomic grouping that you wish tok query neotoma for.  Matches a taxon in the neotoma database
+#' @param taxonname String The name of the taxonomic grouping that you wish tok query neotoma for.  Matches a taxon in the neotoma database
 #' @param ageold Integer Oldest age, as calendar years before present, to include in results from neotoma.
 #' @param ageyoung Integer Youngest age, as calendar years before present, to include in results.
 #' @param loc A list of the form longitudeWest, latitudeSouth, longitudeEast, latitudeNorth that represents a bounding box in which to search for occurrences in Neotoma
@@ -332,7 +332,7 @@ makeTSPlot <- function(climateDF, responseVariable="Precipitation", responsePeri
 #' VOID
 #' @examples
 #' d <- queryNeotoma("ilex")
-#' makeScatterPlot(d, xVariable='Maximum Temperature", yVariable='Minimum Temperature", xPeriod=7, yPeriod=1, modernColor='blue')
+#' makeScatterPlot(d, xVariable='Maximum Temperature', yVariable='Minimum Temperature', xPeriod=7, yPeriod=1, modernColor='blue')
 
 makeScatterPlot <- function(climateDF, xVariable="Precipitation", yVariable="Maximum Temperature", xPeriod=1, yPeriod=1,
                             pointColor='gray', plotModern=TRUE, modernColor='black', title=paste(xVariable, xPeriod, "vs.\n", yVariable, yPeriod)){
@@ -360,3 +360,52 @@ makeScatterPlot <- function(climateDF, xVariable="Precipitation", yVariable="Max
 }
 
 
+#' Use Vertnet API to get data, and return only specific columns needed.
+#' @param taxonname string: Name(s) of the taxonomic grouping that you wish to query Vertnet for.
+#' @param genus string: Target genus name(s).
+#' @param species string: Target species name(s).
+#' @param state string: Target state name(s).
+#' @param limit numeric: Number of results that you would like to accept. Defaults to 10000 if left empty.
+#' @return output data.frame: Lat, Lon, and Age data.
+#' @examples 
+#' convertVertnettoDF("bison")
+#' convertVertnettoDF("(kansas state OR KSU)", limit = 200)
+#' convertVertnettoDF(genus = "mustela", species = "(nivalis OR erminea)")
+#'
+convertVertnettoDF <- function(taxonname, genus = "", species = "", state = "", limit = ""){
+
+  # The default search has 1000 limit. However, if no limit is given, set to 100,000
+  if (limit == ""){
+    limit = 100
+  }
+  # API data request
+  response <- vertsearch(taxonname, genus=genus, species=species, state=state, limit=limit, compact = TRUE, verbose = TRUE)
+
+  # Get the specific column data that we need from the response.
+  # lat, lon, age
+  df <- response$data[c("decimallongitude", "decimallatitude", "year")]
+  names(df) <- c("Longitude", "Latitude", "Age")
+  df <- data.matrix(df)
+  df <- data.frame(df)
+  df <- na.omit(df)
+  df <- unique(df)
+  return(df)
+}
+
+#' Get climate data for Vertnet occurrences.
+#' @param taxonname string: Name(s) of the taxonomic grouping that you wish to query Vertnet for.
+#' @param genus string: Target genus name(s).
+#' @param species string: Target species name(s).
+#' @param state string: Target state name(s).
+#' @param limit numeric: Number of results that you would like to accept. Defaults to 10000 if left empty.
+#' @return output data.frame: The data which you seek.
+#' @examples 
+#' queryVertnet("bison")
+#' queryVertnet("(kansas state OR KSU)", limit = 200)
+#' queryVertnet(genus = "mustela", species = "(nivalis OR erminea)")
+#'
+queryVertnet <- function(taxonname, genus = "", species = "", state = "", limit = ""){
+  inputDF <- convertVertnettoDF(taxonname=taxonname, genus=genus, species=species, state=state, limit=limit)
+  output <- getData(inputDF)
+  return(output)
+}

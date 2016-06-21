@@ -9,7 +9,7 @@ convertNeotomaSDToDF(taxonname, ageold = "", ageyoung = "", loc = "",
   gpid = "", altmin = "", altmax = "")
 }
 \arguments{
-\item{taxonname}{String The name of the taxonomic grouping that you wish tok query neotoma for.  Matches a taxon in the neotoma database}
+\item{taxonname}{String The name of the taxonomic grouping that you wish to query Neotoma for.  Matches a taxon in the neotoma database}
 
 \item{ageold}{Integer Oldest age, as calendar years before present, to include in results from neotoma.}
 

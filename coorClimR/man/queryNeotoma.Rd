@@ -2,8 +2,7 @@
 % Please edit documentation in R/coorClimR.R
 \name{queryNeotoma}
 \alias{queryNeotoma}
-\title{Get Climate Data for Neotoma Occurrences
-#' @param taxonname String The name of the taxonomic grouping that you wish tok query neotoma for.  Matches a taxon in the neotoma database}
+\title{Get Climate Data for Neotoma Occurrences}
 \usage{
 queryNeotoma(taxonname, ageold = "", ageyoung = "", loc = "", gpid = "",
   altmin = "", altmax = "", producer = "", model = "",
@@ -12,6 +11,8 @@ queryNeotoma(taxonname, ageold = "", ageyoung = "", loc = "", gpid = "",
   averagingPeriodType = "", resolution = "")
 }
 \arguments{
+\item{taxonname}{String The name of the taxonomic grouping that you wish tok query neotoma for.  Matches a taxon in the neotoma database}
+
 \item{ageold}{Integer Oldest age, as calendar years before present, to include in results from neotoma.}
 
 \item{ageyoung}{Integer Youngest age, as calendar years before present, to include in results.}
@@ -50,7 +51,6 @@ Outputs a data.frame representation of the api response.  Columns:
 }
 \description{
 Get Climate Data for Neotoma Occurrences
-#' @param taxonname String The name of the taxonomic grouping that you wish tok query neotoma for.  Matches a taxon in the neotoma database
 }
 \examples{
 queryNeotoma("bison bison")
