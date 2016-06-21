@@ -16,16 +16,13 @@ quercus.climate <- queryNeotoma("quercus")
 makeScatterPlot(quercus.climate, xVariable="Maximum Temperature", yVariable='Precipitation")
 ```
 
-### API
+### API:
+1.  getData
+2.  getDataRow
+3.  queryNeotoma
+4.  queryVertnet
+5.  queryAll
+6.  makeTSPlot
+7.  makeScatterPlot
 
-#### getData
 
-\name{checkNumeric}
-\alias{checkNumeric}
-\title{Check if a number is numeric}
-\usage{
-checkNumeric(x)
-}
-\description{
-Check if a number is numeric
-}
