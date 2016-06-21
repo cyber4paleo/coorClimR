@@ -34,14 +34,28 @@ getData <- function(x, y ="", t="", producer="", model="", modelVersion="", vari
     ## this is for multi-row dataframes
     print(x)
     df <- apply(x, 1, function(d){
+      if (d['siteName'] != "" && !is.null(d['siteName']) && !is.na(d['siteName'])){
+        siteName = d['siteName']
+      }else{
+        siteName = ""
+      }
+      if (d['siteID'] != "" && !is.null(d['siteID']) && !is.na(d['siteID'])){
+        siteID = d['siteID']
+      }else{
+        siteID = ""
+      }
+      if(d['sampleID'] != "" && !is.null(d['sampleID']) && !is.na(d['sampleID'])){
+        sampleID = d['sampleID']
+      }else{
+        sampleID = ""
+      }
       q <- getDataRow(d['Longitude'], d['Latitude'], d['Age'], producer=producer, model=model, modelVersion=modelVersion,
                       variableType=variableType, variableUnits=variableUnits, averagingPeriod=averagingPeriod, averagingPeriodType=averagingPeriodType,
-                      resolution=resolution, siteID=d['siteName'], siteName=d['siteID'], sampleID=d['sampleID'], verbose=TRUE)
+                      resolution=resolution, siteID=siteID, siteName=siteName, sampleID=sampleID, verbose=TRUE)
     return(q)
     })
     df <- na.omit(df)
     df <-do.call("rbind", df)
-    print(df)
     return(df)
   }else if (class(x) == "numeric"){
     ##this is for an x,y,t combination as arguments
@@ -273,6 +287,76 @@ queryNeotoma <- function(taxonname, ageold="", ageyoung="", loc="", gpid="", alt
   inputDF <- convertNeotomaSDToDF(taxonname, ageold=ageold, ageyoung=ageyoung, loc=loc, gpid=gpid, altmin=altmin, altmax=altmax)
   output <- getData(inputDF)
   return (output)
+}
+
+#' Plot a climate variable through time
+#' @param climateDF A data.frame object produced by getData that has the climate data you wish to plot
+#' @param responseVariable The name of the variable for the Y axis of the plot
+#' @param responsePeriod The measurement period of the variable for the Y axis of the plot
+#' @param title The title you want to put on the plot
+#' @param plotAVG Boolean flag for plotting the mean of each yearsBP bin (binned average)
+#' @param plotSD Boolean flag for plotting the standard deviation of year yearsBP bin(binned SD)
+#' @param pointColor Color string representing the color in which to plot the individual points
+#' @param lineColor If plotAVG and/or plotSD are true, then those lines will be plotted in this color
+#' @return data.frame with the binned averages, std, and median for the dataset
+#' @examples
+#'  sequoia <- queryNeotoma("sequoia")
+#'  makeTSPlot(sequoia, lineColor="green")
+makeTSPlot <- function(climateDF, responseVariable="Precipitation", responsePeriod=1, title=paste(responseVariable, responsePeriod, "vs. Time"),
+                       plotAVG=T, plotSD=TRUE, pointColor='gray', lineColor='red'){
+  #subset the data
+  df <- climateDF[which(climateDF$VariableType == responseVariable), ]
+  df <- df[which(df$variablePeriod == responsePeriod), ]
+  xVals <- df$yearsBP
+  yVals <- df$value
+  plot(xVals, yVals, ylab=paste(responseVariable, responsePeriod), xlab="Years Before Present", pch=20, col=pointColor)
+  title(title)
+  x <- na.omit(df)
+  s <- ddply(t1,~yearsBP,summarise,mean=mean(value),sd=sd(value), median=median(value))
+  lines(s$yearsBP, s$mean, lwd=3, col=lineColor)
+  lines(s$yearsBP, s$mean + 2*s$sd, col=lineColor)
+  lines(s$yearsBP, s$mean - 2*s$sd, col=lineColor)
+  return(s)
+}
+#' Scatter two environmental variables against each other
+#' @param climateDF A data.frame object produced by getData that has the climate data you wish to plot
+#' @param xVariable Name of variable type to put on the x axis
+#' @param yVariable Name of variable type to put on the y axis
+#' @param xPeriod The measurement period of the variable for the X axis of the plot
+#' @param yPeriod The measurement period of the variable for the T axis of the plot
+#' @param pointColor Color string in which to plot the xy points
+#' @param plotModern boolean flag indicating whether to plot the modern points in a different color than the background points
+#' @param modernColor if plotModern is TRUE, then the modern points will be plotted in this color
+#' @param title The title to give the plots
+#' @return
+#' VOID
+#' @examples
+#' d <- queryNeotoma("ilex")
+#' makeScatterPlot(d, xVariable='Maximum Temperature", yVariable='Minimum Temperature", xPeriod=7, yPeriod=1, modernColor='blue')
+
+makeScatterPlot <- function(climateDF, xVariable="Precipitation", yVariable="Maximum Temperature", xPeriod=1, yPeriod=1,
+                            pointColor='gray', plotModern=TRUE, modernColor='black', title=paste(xVariable, xPeriod, "vs.\n", yVariable, yPeriod)){
+  xdf <- climateDF[which(climateDF$VariableType == xVariable), ]
+  xdf <- xdf[which(xdf$variablePeriod == xPeriod), ]
+  ydf <- climateDF[which(climateDF$VariableType == yVariable), ]
+  ydf <- ydf[which(ydf$variablePeriod == yPeriod), ]
+  if (nrow(ydf) != nrow(xdf)){
+    warning("Length of x and y differ.  Did you enter the variables correctly?")
+    return(F)
+  }
+  xValues = xdf$value
+  yValues = ydf$value
+  plot(xValues, yValues, col=pointColor, xlab=paste(xVariable, xPeriod), ylab=paste(yVariable, yPeriod))
+  if (plotModern){
+    yModern <- ydf[which(ydf$yearsBP == 0), ]
+    xModern <- xdf[which(xdf$yearsBP == 0), ]
+    points(xModern$value, yModern$value, col=modernColor)
+  }
+  m <- lm(xValues~yValues)
+  modsum <- summary(m)
+  r2 <- modsum$adj.r.squared
+  print(paste("R2 Value: ", r2))
+  title(title)
 }
 
 
