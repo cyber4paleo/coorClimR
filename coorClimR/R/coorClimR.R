@@ -1,6 +1,6 @@
 library(jsonlite)
 
-#' Generic function to dispatch calls to the climate data api service
+#' Get Climate Data
 #' @param x A dataframe with minimum columns names: Latitude, Longitude, Age OR a double precision longitude value.  If x is a dataframe, it can also accept columns siteName, sampleID, siteID to preserve object identification through the api call process
 #' @param y A double precision latitude coordinate
 #' @param t A double precision or integer number representing years before 1950, can be negative to represent time since 1950
@@ -37,9 +37,10 @@ getData <- function(x, y ="", t="", producer="", model="", modelVersion="", vari
       q <- getDataRow(d['Longitude'], d['Latitude'], d['Age'], producer=producer, model=model, modelVersion=modelVersion,
                       variableType=variableType, variableUnits=variableUnits, averagingPeriod=averagingPeriod, averagingPeriodType=averagingPeriodType,
                       resolution=resolution, siteID=d['siteName'], siteName=d['siteID'], sampleID=d['sampleID'], verbose=TRUE)
-      return(q)
+    return(q)
     })
-    df <- do.call("rbind", df)
+    df <- na.omit(df)
+    df <-do.call("rbind", df)
     print(df)
     return(df)
   }else if (class(x) == "numeric"){
@@ -89,6 +90,9 @@ getDataRow <- function(x, y, t, producer="", model="", modelVersion="", variable
     return("Request failed: t must be numeric")
   }
   t <- round(t)
+  if (t > 50000){
+    return("T is too large, development requires that t must be less than 25000")
+  }
   ## build the query string
   root <- "http://130.211.157.239:8080/data?"
   url = root
@@ -141,7 +145,14 @@ getDataRow <- function(x, y, t, producer="", model="", modelVersion="", variable
   ## execute the request to the API data service
   response <- fromJSON(url)
   if (response$success){
-    return(response$data)
+    ## make sure we actually have data returned, not just an empty list
+    if (length(response$data) > 0){
+      return(response$data)
+    }else{
+      print("No results returned from niche database.")
+      return(NA)
+    }
+
   }else{
     return(paste("Request failed.  Server says", response['message']))
   }
@@ -166,7 +177,7 @@ checkNumeric <- function(x) is.numeric(x) & !is.na(x)
 #   return(df)
 # }
 
-#' Call the Neotoma web service, get the response, and format into a dataframe that can be ingested by the getData function
+#' Get Neotoma Occurrence Data
 #' Function uses the Neotoma API SampleData endpoint
 #' @param taxonname String The name of the taxonomic grouping that you wish tok query neotoma for.  Matches a taxon in the neotoma database
 #' @param ageold Integer Oldest age, as calendar years before present, to include in results from neotoma.
@@ -211,21 +222,25 @@ convertNeotomaSDToDF <- function(taxonname, ageold="", ageyoung="", loc="", gpid
   print(url)
   response = fromJSON(url)
   data <- response$data ## this is the array
+  if (nrow(data) == 0){
+    print("Failed to get data: No data returned from Neotoma")
+    return(FALSE)
+  }
   ## format the response so it can be correctly ingested by getData
   data['Latitude'] <- (data['SiteLatitudeNorth'] + data['SiteLatitudeSouth'])/2
   data['Longitude'] <- (data['SiteLongitudeEast'] + data['SiteLongitudeWest']) / 2
   calcAge <- (data['SampleAgeYounger'] + data['SampleAgeOlder']) / 2
   data[which(is.na(data['SampleAge'])), ]['SampleAge'] <- calcAge
-  fields <- c("DatasetID", "SampleAge", "Latitude", "Longitude")
+  fields <- c("DatasetID", "SampleAge", "Latitude", "Longitude") ## select only these columns
   df <- data[fields]
-  names(df) <- c("sampleID", "Age", "Latitude", "Longitude")
-  df <- na.omit(df)
+  names(df) <- c("sampleID", "Age", "Latitude", "Longitude") ## rename the columns so they will fit better into getData function
+  df <- na.omit(df) ## get only unique columns that don't have NAs in them
   df <- unique(df)
   return(df)
 }
 
-#' Query the Neotoma API for taxon occurrences and then get the climate for each space-time occurrence held in Neotoma
-#' @param taxonname String The name of the taxonomic grouping that you wish tok query neotoma for.  Matches a taxon in the neotoma database
+#' Get Climate Data for Neotoma Occurrences
+#' #' @param taxonname String The name of the taxonomic grouping that you wish tok query neotoma for.  Matches a taxon in the neotoma database
 #' @param ageold Integer Oldest age, as calendar years before present, to include in results from neotoma.
 #' @param ageyoung Integer Youngest age, as calendar years before present, to include in results.
 #' @param loc A list of the form longitudeWest, latitudeSouth, longitudeEast, latitudeNorth that represents a bounding box in which to search for occurrences in Neotoma
@@ -248,7 +263,6 @@ convertNeotomaSDToDF <- function(taxonname, ageold="", ageyoung="", loc="", gpid
 #' @examples
 #' queryNeotoma("bison bison")
 #' queryNeotoma("sedum", altmax=1500, variablePeriod=1, resolution=0.5)
-
 queryNeotoma <- function(taxonname, ageold="", ageyoung="", loc="", gpid="", altmin="", altmax="", producer="", model="", modelVersion="",
                          variableType="", variableUnits="", variablePeriod="", variablePeriodType="",
                          averagingPeriod="", averagingPeriodType="", resolution=""){

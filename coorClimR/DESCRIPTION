@@ -1,7 +1,7 @@
 Package: coorClimR
 Title: Get Gridded Climate Data at Individual Space-Time Locations
 Version: 0.0.0.9000
-Authors@R: c(person(“Scott”, “Farley”, email = “sfarley2@wisc.edu”, role = c("aut", "cre")), person(“Chris”, “Heiser”, role = "ctb")
+Authors@R: c(person("Scott", "Farley", email = "sfarley2@wisc.edu", role = c("aut", "cre")), person("Chris", "Heiser", role = "ctb"))
 Description: This project is an R-wrapper around an API that stores gridded climate data
   and its metadata in a postgres database. This r-package allows users to get climate data
   for a single point and return the results as a simple data frame,

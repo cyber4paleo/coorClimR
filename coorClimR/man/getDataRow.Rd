@@ -41,7 +41,7 @@ API filter parameters}
 \item{averaingPeriod}{An integer representing the period of which the data has been averaged. Default= "" (all)}
 }
 \value{
-Outputs a data.frame representation of the api response.  Columns: 
+Outputs a data.frame representation of the api response.  Columns:
  From Database: variableunits, variablePeriodType, VariableType, variableID, Producer, sourceID, ModelVersion, tableName, VariableDescription, averagingPeriod, averagingPeriodType, Model, tableName
  Optional Identifiers:  siteName, sampleID, siteID
  Response Values: value, latitude, longitude, yearsBP

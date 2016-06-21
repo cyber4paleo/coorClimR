@@ -2,7 +2,7 @@
 % Please edit documentation in R/coorClimR.R
 \name{convertNeotomaSDToDF}
 \alias{convertNeotomaSDToDF}
-\title{Call the Neotoma web service, get the response, and format into a dataframe that can be ingested by the getData function
+\title{Get Neotoma Occurrence Data
 Function uses the Neotoma API SampleData endpoint}
 \usage{
 convertNeotomaSDToDF(taxonname, ageold = "", ageyoung = "", loc = "",
@@ -20,12 +20,14 @@ convertNeotomaSDToDF(taxonname, ageold = "", ageyoung = "", loc = "",
 \item{gpid}{Integer Limit occurrences to a geopolitical entity id. Valid values provided by GeoPoliticalUnits database table in Neotoma.}
 
 \item{altmin}{Integer Minimum site altitude in meters.}
+
+\item{altmax}{Integer Maximum site altitude in meters.}
 }
 \value{
 data.frame.  Columns: sampleID (actually a Neotoma dataset ID), Latitude, Longitude, Age
 }
 \description{
-Call the Neotoma web service, get the response, and format into a dataframe that can be ingested by the getData function
+Get Neotoma Occurrence Data
 Function uses the Neotoma API SampleData endpoint
 }
 \examples{

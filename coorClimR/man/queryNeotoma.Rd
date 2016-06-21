@@ -2,7 +2,8 @@
 % Please edit documentation in R/coorClimR.R
 \name{queryNeotoma}
 \alias{queryNeotoma}
-\title{Query the Neotoma API for taxon occurrences and then get the climate for each space-time occurrence held in Neotoma}
+\title{Get Climate Data for Neotoma Occurrences
+#' @param taxonname String The name of the taxonomic grouping that you wish tok query neotoma for.  Matches a taxon in the neotoma database}
 \usage{
 queryNeotoma(taxonname, ageold = "", ageyoung = "", loc = "", gpid = "",
   altmin = "", altmax = "", producer = "", model = "",
@@ -11,8 +12,6 @@ queryNeotoma(taxonname, ageold = "", ageyoung = "", loc = "", gpid = "",
   averagingPeriodType = "", resolution = "")
 }
 \arguments{
-\item{taxonname}{String The name of the taxonomic grouping that you wish tok query neotoma for.  Matches a taxon in the neotoma database}
-
 \item{ageold}{Integer Oldest age, as calendar years before present, to include in results from neotoma.}
 
 \item{ageyoung}{Integer Youngest age, as calendar years before present, to include in results.}
@@ -22,6 +21,8 @@ queryNeotoma(taxonname, ageold = "", ageyoung = "", loc = "", gpid = "",
 \item{gpid}{Integer Limit occurrences to a geopolitical entity id. Valid values provided by GeoPoliticalUnits database table in Neotoma.}
 
 \item{altmin}{Integer Minimum site altitude in meters.}
+
+\item{altmax}{Integer Maximum site altitude in meters.}
 
 \item{model}{A string specifying the model from which the climate data was created.  Default = "" (all)}
 
@@ -42,13 +43,14 @@ queryNeotoma(taxonname, ageold = "", ageyoung = "", loc = "", gpid = "",
 \item{averaingPeriod}{An integer representing the period of which the data has been averaged. Default= "" (all)}
 }
 \value{
-Outputs a data.frame representation of the api response.  Columns: 
+Outputs a data.frame representation of the api response.  Columns:
  From Database: variableunits, variablePeriodType, VariableType, variableID, Producer, sourceID, ModelVersion, tableName, VariableDescription, averagingPeriod, averagingPeriodType, Model, tableName
  Optional Identifiers:  siteName, sampleID, siteID
  Response Values: value, latitude, longitude, yearsBP
 }
 \description{
-Query the Neotoma API for taxon occurrences and then get the climate for each space-time occurrence held in Neotoma
+Get Climate Data for Neotoma Occurrences
+#' @param taxonname String The name of the taxonomic grouping that you wish tok query neotoma for.  Matches a taxon in the neotoma database
 }
 \examples{
 queryNeotoma("bison bison")
