@@ -1,6 +1,7 @@
 library(jsonlite)
 
 #' Get Climate Data
+#' @export
 #' @param x A dataframe with minimum columns names: Latitude, Longitude, Age OR a double precision longitude value.  If x is a dataframe, it can also accept columns siteName, sampleID, siteID to preserve object identification through the api call process
 #' @param y A double precision latitude coordinate
 #' @param t A double precision or integer number representing years before 1950, can be negative to represent time since 1950
@@ -68,6 +69,7 @@ getData <- function(x, y ="", t="", producer="", model="", modelVersion="", vari
 
 
 #' Get climate data for a single space-time coordnate
+#' @export
 #' @param x A double precision longitude value.
 #' @param t A double precision or integer number representing years before 1950, can be negative to represent time since 1950
 #' API filter parameters
@@ -177,6 +179,7 @@ getDataRow <- function(x, y, t, producer="", model="", modelVersion="", variable
 }
 
 #' Check if a number is numeric
+#' @export
 checkNumeric <- function(x) is.numeric(x) & !is.na(x)
 
 
@@ -197,6 +200,7 @@ checkNumeric <- function(x) is.numeric(x) & !is.na(x)
 
 #' Get Neotoma Occurrence Data
 #' Function uses the Neotoma API SampleData endpoint
+#' @export
 #' @param taxonname String The name of the taxonomic grouping that you wish to query Neotoma for.  Matches a taxon in the neotoma database
 #' @param ageold Integer Oldest age, as calendar years before present, to include in results from neotoma.
 #' @param ageyoung Integer Youngest age, as calendar years before present, to include in results.
@@ -258,6 +262,7 @@ convertNeotomaSDToDF <- function(taxonname, ageold="", ageyoung="", loc="", gpid
 }
 
 #' Get Climate Data for Neotoma Occurrences
+#' @export
 #' @param taxonname String The name of the taxonomic grouping that you wish tok query neotoma for.  Matches a taxon in the neotoma database
 #' @param ageold Integer Oldest age, as calendar years before present, to include in results from neotoma.
 #' @param ageyoung Integer Youngest age, as calendar years before present, to include in results.
@@ -290,6 +295,7 @@ queryNeotoma <- function(taxonname, ageold="", ageyoung="", loc="", gpid="", alt
 }
 
 #' Plot a climate variable through time
+#' @export
 #' @param climateDF A data.frame object produced by getData that has the climate data you wish to plot
 #' @param responseVariable The name of the variable for the Y axis of the plot
 #' @param responsePeriod The measurement period of the variable for the Y axis of the plot
@@ -319,6 +325,7 @@ makeTSPlot <- function(climateDF, responseVariable="Precipitation", responsePeri
   return(s)
 }
 #' Scatter two environmental variables against each other
+#' @export
 #' @param climateDF A data.frame object produced by getData that has the climate data you wish to plot
 #' @param xVariable Name of variable type to put on the x axis
 #' @param yVariable Name of variable type to put on the y axis
@@ -361,6 +368,7 @@ makeScatterPlot <- function(climateDF, xVariable="Precipitation", yVariable="Max
 
 
 #' Use Vertnet API to get data, and return only specific columns needed.
+#' @export
 #' @param taxonname string: Name(s) of the taxonomic grouping that you wish to query Vertnet for.
 #' @param genus string: Target genus name(s).
 #' @param species string: Target species name(s).
@@ -393,6 +401,7 @@ convertVertnettoDF <- function(taxonname, genus = "", species = "", state = "", 
 }
 
 #' Get climate data for Vertnet occurrences.
+#' @export
 #' @param taxonname string: Name(s) of the taxonomic grouping that you wish to query Vertnet for.
 #' @param genus string: Target genus name(s).
 #' @param species string: Target species name(s).
