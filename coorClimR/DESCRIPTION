@@ -1,9 +1,15 @@
 Package: coorClimR
-Title: What the Package Does (one line, title case)
+Title: Get Gridded Climate Data at Individual Space-Time Locations
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-Depends: R (>= 3.2.0)
-License: What license is it under?
+Authors@R: c(person(“Scott”, “Farley”, email = “sfarley2@wisc.edu”, role = c("aut", "cre")), person(“Chris”, “Heiser”, role = "ctb")
+Description: This project is an R-wrapper around an API that stores gridded climate data
+  and its metadata in a postgres database. This r-package allows users to get climate data
+  for a single point and return the results as a simple data frame,
+  making visualization and analysis easy. This package integrates with the Neotoma R Package and the VertNet R Package to support existing workflows.
+Depends:
+    R (>= 3.2.0),
+License: MIT
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 5.0.1.9000
+Imports: jsonlite
