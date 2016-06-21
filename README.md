@@ -2,7 +2,8 @@
 Geocoordinates-to-Climate in R
 
 #### Authors
-[Scott Farley](mailto:sfarley2@wisc.edu)
+[Scott Farley](mailto:sfarley2@wisc.edu), University of Wisconsin, Madison
+
 Chris Heiser
 
 ### Problem
@@ -21,12 +22,15 @@ makeScatterPlot(quercus.climate, xVariable="Maximum Temperature", yVariable='Pre
 ```
 
 ### API:
-1.  getData
-2.  getDataRow
-3.  queryNeotoma
-4.  queryVertnet
-5.  queryAll
-6.  makeTSPlot
-7.  makeScatterPlot
+1.  getData: Get climate data for a point or set of points
+2.  getDataRow: Search the database for climate at a space-time location
+3.  queryNeotoma: Query the Neotoma Paleoecological Database and get climate data formfossil occurrences
+4.  queryVertnet: Query the Vertnet database and get climate data at vertebrate localities
+5.  queryAll: Query all supported databases for a taxon and get climate data at the x-y-t coordinates
+6.  makeTSPlot: Plot a climate variable vs. time
+7.  makeScatterPlot: Plot two climate variables against each other
+
+
+Full documentation is is the coorClimR.pdf reference manual.
 
 
