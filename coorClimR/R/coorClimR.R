@@ -81,17 +81,21 @@ getDataRow <- function(x, y, t, producer="", model="", modelVersion="", variable
                        averagingPeriod="", averagingPeriodType="", resolution="", siteID="", siteName="", sampleID="", verbose=F){
   ##check variable types
   if (!checkNumeric(x)){
-    return ("Request failed: x must be numeric.")
+    warning ("Request failed: x must be numeric.")
+    return(data.frame())
   }
   if (!checkNumeric(y)){
-    return("Request failed: y must be numeric")
+    warning("Request failed: y must be numeric")
+    return(data.frame())
   }
   if (!checkNumeric(t)){
-    return("Request failed: t must be numeric")
+    warning("Request failed: t must be numeric")
+    return(data.frame())
   }
   t <- round(t)
   if (t > 50000){
-    return("T is too large, development requires that t must be less than 25000")
+    warning("T is too large, development requires that t must be less than 25000")
+    return(data.frame())
   }
   ## build the query string
   root <- "http://130.211.157.239:8080/data?"
@@ -271,10 +275,4 @@ queryNeotoma <- function(taxonname, ageold="", ageyoung="", loc="", gpid="", alt
   return (output)
 }
 
-queryVertnet <- function(args){
-  return()
-}
 
-queryAll <- function(args){
-  return()
-}
