@@ -34,14 +34,14 @@ getData <- function(x, y ="", t="", producer="", model="", modelVersion="", vari
     ## this is for multi-row dataframes
     print(x)
     df <- apply(x, 1, function(d){
-      q <- getDataRow(d['Longitude'], d['Latitude'], d['Age'], producer=producer, model=model, modelVersion=modelVersion,
+      age = abs(1950-d["Age"])
+      q <- getDataRow(d['Longitude'], d['Latitude'], age, producer=producer, model=model, modelVersion=modelVersion,
                       variableType=variableType, variableUnits=variableUnits, averagingPeriod=averagingPeriod, averagingPeriodType=averagingPeriodType,
-                      resolution=resolution, siteID=d['siteName'], siteName=d['siteID'], sampleID=d['sampleID'], verbose=TRUE)
+                      resolution=resolution, siteID="", siteName="", sampleID="", verbose=TRUE)
     return(q)
     })
     df <- na.omit(df)
     df <-do.call("rbind", df)
-    print(df)
     return(df)
   }else if (class(x) == "numeric"){
     ##this is for an x,y,t combination as arguments
@@ -275,4 +275,31 @@ queryNeotoma <- function(taxonname, ageold="", ageyoung="", loc="", gpid="", alt
   return (output)
 }
 
+
+convertVertnettoDF <- function(taxonname, genus = "", species = "", state = "", limit = ""){
+
+  # The default search has 1000 limit. However, if no limit is given, set to 100,000
+  if (limit == ""){
+    limit = 100
+  }
+  # API data request
+  result <- vertsearch(taxonname, genus=genus, species=species, state=state, limit=limit, compact = TRUE, verbose = TRUE)
+
+  # start picking apart the response and keeping the relevant data
+  # lat, lon, siteID or some ID, year
+  df <- result$data[c("decimallongitude", "decimallatitude", "year")]
+  names(df) <- c("Longitude", "Latitude", "Age")
+  df <- data.matrix(df)
+  df <- data.frame(df)
+  df <- na.omit(df)
+  df <- unique(df)
+  return(df)
+}
+
+
+queryVertnet <- function(taxonname, genus = "", species = "", state = "", limit = ""){
+  inputDF <- convertVertnettoDF(taxonname=taxonname, genus=genus, species=species, state=state, limit=limit)
+  output <- getData(inputDF)
+  return(inputDF)
+}
 
