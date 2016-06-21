@@ -450,6 +450,7 @@ queryVertnet <- function(taxonname, genus = "", species = "", state = "", limit 
 }
 
 #' Query multiple databases at a time. Merge results.
+#' @export
 #' @param taxonname string: Name(s) of the taxonomic grouping that you wish to query Vertnet for.
 #' @return output data.frame: Combined results from all databases
 #' @examples
