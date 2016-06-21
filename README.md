@@ -19,4 +19,12 @@ makeScatterPlot(quercus.climate, xVariable="Maximum Temperature", yVariable='Pre
 ### API
 
 #### getData
-
+\name{checkNumeric}
+\alias{checkNumeric}
+\title{Check if a number is numeric}
+\usage{
+checkNumeric(x)
+}
+\description{
+Check if a number is numeric
+}
