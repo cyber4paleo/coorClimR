@@ -333,7 +333,7 @@ makeTSPlot <- function(climateDF, responseVariable="Precipitation", responsePeri
   plot(xVals, yVals, ylab=paste(responseVariable, responsePeriod), xlab="Years Before Present", pch=20, col=pointColor)
   title(title)
   x <- na.omit(df)
-  s <- ddply(t1,~yearsBP,summarise,mean=mean(value),sd=sd(value), median=median(value))
+  s <- ddply(x,~yearsBP,summarise,mean=mean(value),sd=sd(value), median=median(value))
   lines(s$yearsBP, s$mean, lwd=3, col=lineColor)
   lines(s$yearsBP, s$mean + 2*s$sd, col=lineColor)
   lines(s$yearsBP, s$mean - 2*s$sd, col=lineColor)
@@ -403,7 +403,7 @@ convertVertnettoDF <- function(taxonname, genus = "", species = "", state = "", 
   }
   # API data request
   response <- vertsearch(taxonname, genus=genus, species=species, state=state, limit=limit, compact = TRUE, verbose = TRUE)
-
+  
   # Get the specific column data that we need from the response.
   # lat, lon, age
   df <- response$data[c("decimallongitude", "decimallatitude", "year")]
@@ -412,6 +412,7 @@ convertVertnettoDF <- function(taxonname, genus = "", species = "", state = "", 
   df <- data.frame(df)
   df <- na.omit(df)
   df <- unique(df)
+  df['age'] <- abs(1950 - df['Age'])
   return(df)
 }
 
@@ -440,7 +441,6 @@ queryVertnet <- function(taxonname, genus = "", species = "", state = "", limit 
 #' @return output data.frame: Combined results from all databases
 #' @examples
 #' queryAll("bison bison")
-
 queryAll <- function(taxonname){
   ndf <- queryNeotoma(taxonname)
   vdf <- queryVertnet(taxonname)
