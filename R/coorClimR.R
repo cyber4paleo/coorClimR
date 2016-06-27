@@ -334,9 +334,13 @@ makeTSPlot <- function(climateDF, responseVariable="Precipitation", responsePeri
   title(title)
   x <- na.omit(df)
   s <- ddply(x,~yearsBP,summarise,mean=mean(value),sd=sd(value), median=median(value))
-  lines(s$yearsBP, s$mean, lwd=3, col=lineColor)
-  lines(s$yearsBP, s$mean + 2*s$sd, col=lineColor)
-  lines(s$yearsBP, s$mean - 2*s$sd, col=lineColor)
+  if (plotAVG){
+    lines(s$yearsBP, s$mean, lwd=3, col=lineColor)
+  }
+  if (plotSD){
+    lines(s$yearsBP, s$mean + 2*s$sd, col=lineColor)
+    lines(s$yearsBP, s$mean - 2*s$sd, col=lineColor) 
+  }
   return(s)
 }
 #' Scatter two environmental variables against each other
