@@ -16,6 +16,7 @@ This project is an R-wrapper around an [API](http://github.com/scottsfarley93/ni
 A paleoecologist wants to plot *Quercus* pollen abundance against January minimum temperature to visually test hypotheses about oak niche stability since the last deglaciation.  Using the Neotoma R Wrapper, she can get the spatiotemporal coordinates (latitude, longitude, time) and relative pollen abundance for every occurrence in the Neotoma Paleoecological Database.  Using the coorClimR R package, she can query the niche database for the climate variables of her choice, in this case January minimum temperature.  The use of this package allows her to sidestep the downloading, management, and interpolation associated with manually doing this analysis.  
 
 ```
+install_github("cyber4paleo/coorClimR")
 library(coorClimR)
 quercus.climate <- queryNeotoma("quercus")
 makeScatterPlot(quercus.climate, xVariable="Maximum Temperature", yVariable='Precipitation")
